@@ -74,9 +74,10 @@ vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+vim.keymap.set("n", "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
 
 -- terminal commands
-vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
+-- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
 -- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
 -- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
 
@@ -242,9 +243,10 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>f', group = '[F]ind' },
+        { '<leader>r', group = '[R]un' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        -- { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
   },
@@ -774,29 +776,120 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
+  -- Colorscheme
 
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-      vim.api.nvim_set_hl(0, "Normal", {bg="none"})
-      vim.api.nvim_set_hl(0, "NormalFloat", {bg="none"})
-    end,
+  -- {
+  --   "rebelot/kanagawa.nvim",
+  --
+  --   config = function()
+  --       -- Default options:
+  --     require('kanagawa').setup({
+  --         compile = false,             -- enable compiling the colorscheme
+  --         undercurl = true,            -- enable undercurls
+  --         commentStyle = { italic = true },
+  --         functionStyle = {},
+  --         keywordStyle = { italic = true},
+  --         statementStyle = { bold = true },
+  --         typeStyle = {},
+  --         transparent = false,         -- do not set background color
+  --         dimInactive = false,         -- dim inactive window `:h hl-NormalNC`
+  --         terminalColors = true,       -- define vim.g.terminal_color_{0,17}
+  --         colors = {                   -- add/modify theme and palette colors
+  --             palette = {},
+  --             theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+  --         },
+  --         overrides = function(colors) -- add/modify highlights
+  --             return {}
+  --         end,
+  --         theme = "wave",              -- Load "wave" theme
+  --         background = {               -- map the value of 'background' option to a theme
+  --             dark = "wave",           -- try "dragon" !
+  --             light = "lotus"
+  --         },
+  --     })
+  --     -- setup must be called before loading
+  --     vim.cmd("colorscheme kanagawa")
+  --   end
+  -- },
+
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    config = function()
+      require("catppuccin").setup({
+          flavour = "macchiato", -- latte, frappe, macchiato, mocha
+          background = { -- :h background
+              light = "latte",
+              dark = "mocha",
+          },
+          transparent_background = false, -- disables setting the background color.
+          show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
+          term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+          dim_inactive = {
+              enabled = false, -- dims the background color of inactive window
+              shade = "dark",
+              percentage = 0.15, -- percentage of the shade to apply to the inactive window
+          },
+          no_italic = false, -- Force no italic
+          no_bold = false, -- Force no bold
+          no_underline = false, -- Force no underline
+          styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+              comments = { "italic" }, -- Change the style of comments
+              conditionals = { "italic" },
+              loops = {},
+              functions = {},
+              keywords = {},
+              strings = {},
+              variables = {},
+              numbers = {},
+              booleans = {},
+              properties = {},
+              types = {},
+              operators = {},
+              -- miscs = {}, -- Uncomment to turn off hard-coded styles
+          },
+          color_overrides = {},
+          custom_highlights = {},
+          default_integrations = true,
+          integrations = {
+              cmp = true,
+              gitsigns = true,
+              nvimtree = true,
+              treesitter = true,
+              notify = false,
+              mini = {
+                  enabled = true,
+                  indentscope_color = "",
+              },
+              -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+          },
+      })
+
+      -- setup must be called before loading
+      vim.cmd.colorscheme "catppuccin"
+    end
   },
+
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('tokyonight').setup {
+  --       styles = {
+  --         comments = { italic = false }, -- Disable italics in comments
+  --       },
+  --     }
+  --
+  --     -- Load the colorscheme here.
+  --     -- Like many other themes, this one has different styles, and you could load
+  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+  --     vim.cmd.colorscheme 'tokyonight-night'
+  --     vim.api.nvim_set_hl(0, "Normal", {bg="none"})
+  --     vim.api.nvim_set_hl(0, "NormalFloat", {bg="none"})
+  --   end,
+  -- },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
