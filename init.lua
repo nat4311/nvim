@@ -75,6 +75,11 @@ vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- terminal commands
+vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
+-- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
+-- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
+
 ------------------------    [[ Basic Autocommands ]]    --------------------------------------------------
 -- NOTE: See `:help lua-guide-autocommands`
 
@@ -116,8 +121,30 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+   -- Detect tabstop and shiftwidth automatically
+  'NMAC427/guess-indent.nvim',
+
+  -- git GUI
+  {
+    "kdheepak/lazygit.nvim",
+      lazy = true,
+      cmd = {
+          "LazyGit",
+          "LazyGitConfig",
+          "LazyGitCurrentFile",
+          "LazyGitFilter",
+          "LazyGitFilterCurrentFile",
+      },
+      -- optional for floating window border decoration
+      dependencies = {
+          "nvim-lua/plenary.nvim",
+      },
+      -- setting the keybinding for LazyGit with 'keys' is recommended in
+      -- order to load the plugin when the command is run for the first time
+      keys = {
+          { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+      }
+  },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
