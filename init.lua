@@ -47,6 +47,8 @@ vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.sidescrolloff = 8
 vim.o.confirm = true
+vim.o.shiftwidth = 4
+vim.o.tabstop = 4
 
 ---------------------------    [[ Basic Keymaps ]]    -----------------------------------------------------
 -- NOTE: See `:help vim.keymap.set()`
@@ -75,6 +77,7 @@ vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 vim.keymap.set("n", "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
+vim.keymap.set("x", "p", "\"_dP")
 
 -- terminal commands
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
@@ -776,8 +779,33 @@ require('lazy').setup({
     },
   },
 
-  -- Colorscheme
+  -- Aesthetics
+	'vimpostor/vim-tpipeline',
 
+  -- { 
+  --   'folke/noice.nvim',
+  --   event = 'VeryLazy',
+  --   opts = {},
+  --   dependencies = {
+  --     'MunifTanjim/nui.nvim',
+  --     'rcarriga/nvim-notify',
+  --   },
+  --   config = function()
+  --     require("noice").setup({
+  --       routes = {
+  --         {
+  --           filter = {
+  --             event = "msg_show",
+  --             kind = "",
+  --             find = "written",
+  --           },
+  --           opts = { skip = false },
+  --         },
+  --       },
+  --     })
+  --   end
+  -- },
+  
   -- {
   --   "rebelot/kanagawa.nvim",
   --
@@ -813,12 +841,35 @@ require('lazy').setup({
   -- },
 
   {
+    'nvim-lualine/lualine.nvim',
+    config = function()
+      require('lualine').setup {
+        options = {
+          theme = 'catppuccin',
+          section_separators = '',
+          component_separators = '',
+          icons_enabled = true,
+        },
+        dependencies = {'nvim-tree/nvim-deb-devicons'},
+        sections = {
+          lualine_a = {'mode'},
+          lualine_b = {'branch', 'diff', 'diagnostics'},
+          lualine_c = {'filename'},
+          lualine_x = {'filetype'},
+          lualine_y = {'progress'},
+          lualine_z = {'location'},
+        },
+      }
+    end,
+  },
+
+  {
     "catppuccin/nvim",
     name = "catppuccin",
     priority = 1000,
     config = function()
       require("catppuccin").setup({
-          flavour = "macchiato", -- latte, frappe, macchiato, mocha
+          flavour = "mocha", -- latte, frappe, macchiato, mocha
           background = { -- :h background
               light = "latte",
               dark = "mocha",

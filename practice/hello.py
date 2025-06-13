@@ -1,2 +1,8 @@
-for i in range(100):
-    print(i)
+import numpy as np
+
+for i in range(10):
+    if i == 5:
+        print("five")
+    else:
+        print(i)
+
