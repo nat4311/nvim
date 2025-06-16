@@ -7,6 +7,8 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
+-- vim.g.foldmethod = 'fold-indent'
+
 ---------------------------------    [[ Setting options ]]    ------------------------------
 -- NOTE: For more options, you can see `:help option-list`
 
@@ -49,6 +51,10 @@ vim.o.sidescrolloff = 8
 vim.o.confirm = true
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
+vim.o.foldcolumn = '1' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 
 ---------------------------    [[ Basic Keymaps ]]    -----------------------------------------------------
 -- NOTE: See `:help vim.keymap.set()`
@@ -64,20 +70,33 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', "<C-h>", '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', "<C-l>", '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', "<C-j>", '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', "<C-k>", '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-vim.keymap.set("n", "<leader>e", vim.cmd.Ex, {desc = 'Open file [e]xplorer'})
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
-vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
-vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
-vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-vim.keymap.set("n", "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
-vim.keymap.set("x", "p", "\"_dP")
+vim.keymap.set('n', "<Esc>", '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', "<leader>e", vim.cmd.Ex, {desc = 'Open file [e]xplorer'})
+vim.keymap.set('n', "<leader>q", vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+-- vim.keymap.set('n', "<leader>td", function() vim.diagnostic.config({virtual_text=false}) end, {desc = '[T]oggle [D]iagnostics'})
+local virtual_text = true
+vim.keymap.set('n', "<leader>td", function()
+  if virtual_text then
+    vim.diagnostic.config({virtual_text=false})
+  else
+    vim.diagnostic.config({virtual_text=true})
+  end
+  virtual_text = not virtual_text
+  -- vim.diagnostic.config({virtual_text=false}) 
+end, {desc = '[T]oggle [D]iagnostics'})
+
+vim.keymap.set('n', "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
+vim.keymap.set('n', "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
+vim.keymap.set('n', "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
+vim.keymap.set('n', "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
+vim.keymap.set('x', "p", "\"_dP")
+
 
 -- terminal commands
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
@@ -127,6 +146,11 @@ rtp:prepend(lazypath)
 require('lazy').setup({
    -- Detect tabstop and shiftwidth automatically
   'NMAC427/guess-indent.nvim',
+
+  -- code folding
+  -- {
+  --   'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async',
+  -- },
 
   -- git GUI
   {
@@ -556,6 +580,15 @@ require('lazy').setup({
             return diagnostic_message[diagnostic.severity]
           end,
         },
+                -- this wasn't working
+        -- callback = function(event)
+        --   local map = function(keys, func, desc, mode)
+        --     mode = mode or 'n'
+        --     vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+        --   end
+        --   -- map('<leader>td', vim.diagnostic.enable(not vim.diagnostic.is_enabled()), '[T]oggle [D]iagnostics')
+        --   map('<leader>td', vim.diagnostic.enable(false), '[T]oggle [D]iagnostics')
+        -- end,
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -576,7 +609,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -619,6 +652,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        -- 'python-lsp-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
