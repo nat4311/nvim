@@ -83,25 +83,30 @@ local virtual_text = true
 vim.keymap.set('n', "<leader>td", function()
   if virtual_text then
     vim.diagnostic.config({virtual_text=false})
+    print("diagnostics messages off")
   else
     vim.diagnostic.config({virtual_text=true})
+    print("diagnostics messages on")
   end
   virtual_text = not virtual_text
   -- vim.diagnostic.config({virtual_text=false}) 
 end, {desc = '[T]oggle [D]iagnostics'})
+vim.keymap.set('n', "gte", '<cmd>lua vim.diagnostic.goto_next( { severity = { min = vim.diagnostic.severity.ERROR } })<CR>', {desc = "[G]o[t]o next [E]rror"})
 
 vim.keymap.set('n', "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 vim.keymap.set('n', "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 vim.keymap.set('n', "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 vim.keymap.set('n', "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
+-- prevent pasting from overwriting yank register
 vim.keymap.set('x', "p", "\"_dP")
+-- to allow ctrl backspace to delete words in terminal emulator (for some reason ctrl-backspace maps to ctrl-h in konsole)
+vim.keymap.set('i', "<C-h>", "<C-W>")
 
-
--- terminal commands
+-- terminal command examples
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
 -- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
 -- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
+-- vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
 
 ------------------------    [[ Basic Autocommands ]]    --------------------------------------------------
 -- NOTE: See `:help lua-guide-autocommands`
@@ -145,7 +150,37 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
    -- Detect tabstop and shiftwidth automatically
-  'NMAC427/guess-indent.nvim',
+      'NMAC427/guess-indent.nvim',
+
+    {
+          "ThePrimeagen/harpoon",
+          branch = "harpoon2",
+          dependencies = { "nvim-lua/plenary.nvim" },
+          config = function()
+              local harpoon = require('harpoon')
+              harpoon.setup()
+              vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, {desc = "[H]arpoon [A]dd"})
+              vim.keymap.set("n", "<leader>hl", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, {desc = "[H]arpoon [L]ist"})
+          end,
+    },
+
+    { 'alexghergh/nvim-tmux-navigation', config = function()
+
+        local nvim_tmux_nav = require('nvim-tmux-navigation')
+
+        nvim_tmux_nav.setup {
+            disable_when_zoomed = true -- defaults to false
+        }
+
+        vim.keymap.set('n', "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
+        vim.keymap.set('n', "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
+        vim.keymap.set('n', "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
+        vim.keymap.set('n', "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
+        vim.keymap.set('n', "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
+        vim.keymap.set('n', "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
+
+    end
+    },
 
   -- code folding
   -- {
@@ -170,7 +205,7 @@ require('lazy').setup({
       -- setting the keybinding for LazyGit with 'keys' is recommended in
       -- order to load the plugin when the command is run for the first time
       keys = {
-          { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+          { "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" }
       }
   },
 
@@ -268,9 +303,10 @@ require('lazy').setup({
       },
 
       -- Document existing key chains
+      -- Leader Labels
       spec = {
         { '<leader>f', group = '[F]ind' },
-        { '<leader>r', group = '[R]un' },
+        { '<leader>h', group = '[H]arpoon' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         -- { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -562,9 +598,9 @@ require('lazy').setup({
         signs = vim.g.have_nerd_font and {
           text = {
             [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
+            -- [vim.diagnostic.severity.WARN] = '󰀪 ',
+            -- [vim.diagnostic.severity.INFO] = '󰋽 ',
+            -- [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
         virtual_text = {
@@ -573,9 +609,9 @@ require('lazy').setup({
           format = function(diagnostic)
             local diagnostic_message = {
               [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
+              -- [vim.diagnostic.severity.WARN] = diagnostic.message,
+              -- [vim.diagnostic.severity.INFO] = diagnostic.message,
+              -- [vim.diagnostic.severity.HINT] = diagnostic.message,
             }
             return diagnostic_message[diagnostic.severity]
           end,
@@ -609,7 +645,6 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -671,47 +706,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
-    cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>af',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[A]uto[F]ormat buffer',
-      },
-    },
-    opts = {
-      notify_on_error = false,
-      -- format_on_save = function(bufnr)
-      --   -- Disable "format_on_save lsp_fallback" for languages that don't
-      --   -- have a well standardized coding style. You can add additional
-      --   -- languages here or re-enable it for the disabled ones.
-      --   local disable_filetypes = { c = true, cpp = true }
-      --   if disable_filetypes[vim.bo[bufnr].filetype] then
-      --     return nil
-      --   else
-      --     return {
-      --       timeout_ms = 500,
-      --       lsp_format = 'fallback',
-      --     }
-      --   end
-      -- end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
-    },
   },
 
   { -- Autocompletion
@@ -809,7 +803,7 @@ require('lazy').setup({
       fuzzy = { implementation = 'lua' },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = { enabled = false },
     },
   },
 
@@ -1090,4 +1084,5 @@ require('lazy').setup({
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
+--
 -- vim: ts=2 sts=2 sw=2 et
