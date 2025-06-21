@@ -106,7 +106,7 @@ vim.keymap.set('i', "<C-h>", "<C-W>")
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
 -- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
 -- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
--- vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
 
 ------------------------    [[ Basic Autocommands ]]    --------------------------------------------------
 -- NOTE: See `:help lua-guide-autocommands`
@@ -307,6 +307,7 @@ require('lazy').setup({
       spec = {
         { '<leader>f', group = '[F]ind' },
         { '<leader>h', group = '[H]arpoon' },
+        { '<leader>r', group = '[R]un' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         -- { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
