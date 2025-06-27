@@ -1,6 +1,6 @@
 ### MUST BE INSTALLED MANUALLY
 - lazygit: https://github.com/dariogriffo/lazygit-debian/releases
-    sudo dpkg -i <filename>.deb
+    sudo dpkg -i filename.deb
 
 
 # kickstart.nvim
