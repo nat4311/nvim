@@ -78,19 +78,26 @@ vim.keymap.set('n', "<C-k>", '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', "<Esc>", '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', "<leader>e", vim.cmd.Ex, {desc = 'Open file [e]xplorer'})
 vim.keymap.set('n', "<leader>q", vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', "<leader>on", "<cmd> e $MYVIMRC<CR>", { desc = '[O]pen [N]eovim configuration' })
+vim.keymap.set('n', "<leader>ot", "<cmd> e /home/nhsu/.tmux.conf<CR>", { desc = '[O]pen [T]mux configuration' })
+vim.keymap.set('n', "<leader>oc", "<cmd> e /home/nhsu/coding/<CR>", { desc = '[O]pen [C]oding folder' })
 -- vim.keymap.set('n', "<leader>td", function() vim.diagnostic.config({virtual_text=false}) end, {desc = '[T]oggle [D]iagnostics'})
 local virtual_text = true
-vim.keymap.set('n', "<leader>td", function()
-  if virtual_text then
-    vim.diagnostic.config({virtual_text=false})
-    print("diagnostics messages off")
-  else
-    vim.diagnostic.config({virtual_text=true})
-    print("diagnostics messages on")
-  end
-  virtual_text = not virtual_text
-  -- vim.diagnostic.config({virtual_text=false}) 
-end, {desc = '[T]oggle [D]iagnostics'})
+vim.keymap.set(
+    'n',
+    "<leader>td",
+    function()
+        if virtual_text then
+            vim.diagnostic.config({virtual_text=false})
+            print("diagnostics messages off")
+        else
+            vim.diagnostic.config({virtual_text=true})
+            print("diagnostics messages on")
+        end
+        virtual_text = not virtual_text
+        -- vim.diagnostic.config({virtual_text=false}) 
+    end, {desc = '[T]oggle [D]iagnostics'}
+)
 vim.keymap.set('n', "gte", '<cmd>lua vim.diagnostic.goto_next( { severity = { min = vim.diagnostic.severity.ERROR } })<CR>', {desc = "[G]o[t]o next [E]rror"})
 
 vim.keymap.set('n', "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -106,7 +113,8 @@ vim.keymap.set('i', "<C-h>", "<C-W>")
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
 -- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
 -- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
-vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "run python script", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "[R]un [p]ython script", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>rc", "<cmd>!gcc % && ./a.out <CR>", { desc = "[R]un [c] program", noremap = false, silent = true })
 
 ------------------------    [[ Basic Autocommands ]]    --------------------------------------------------
 -- NOTE: See `:help lua-guide-autocommands`
@@ -307,6 +315,7 @@ require('lazy').setup({
       spec = {
         { '<leader>f', group = '[F]ind' },
         { '<leader>h', group = '[H]arpoon' },
+        { '<leader>o', group = '[O]pen' },
         { '<leader>r', group = '[R]un' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
@@ -1046,7 +1055,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
