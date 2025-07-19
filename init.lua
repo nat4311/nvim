@@ -1,7 +1,6 @@
---- CONFIGS TO COPY
---- nvim
---- tmux
---- i3
+--- nvim  :so from inside nvim
+--- tmux  ctrl-space r from inside tmux
+--- i3    win-shift-r from inside i3
 ---------------------------------    [[ Global options ]]    ------------------------------
 
 -- Set <space> as the leader key
