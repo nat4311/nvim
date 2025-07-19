@@ -1,3 +1,7 @@
+--- CONFIGS TO COPY
+--- nvim
+--- tmux
+--- i3
 ---------------------------------    [[ Global options ]]    ------------------------------
 
 -- Set <space> as the leader key
@@ -77,10 +81,13 @@ vim.keymap.set('n', "<C-k>", '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 vim.keymap.set('n', "<Esc>", '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', "<leader>e", vim.cmd.Ex, {desc = 'Open file [e]xplorer'})
-vim.keymap.set('n', "<leader>q", vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-vim.keymap.set('n', "<leader>on", "<cmd> e $MYVIMRC<CR>", { desc = '[O]pen [N]eovim configuration' })
-vim.keymap.set('n', "<leader>ot", "<cmd> e /home/nhsu/.tmux.conf<CR>", { desc = '[O]pen [T]mux configuration' })
+vim.keymap.set('n', "<leader>oq", vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', "<leader>on", "<cmd> e $MYVIMRC<CR>", { desc = '[O]pen [N]eovim config' })
+vim.keymap.set('n', "<leader>ot", "<cmd> e /home/nhsu/.tmux.conf<CR>", { desc = '[O]pen [T]mux config' })
 vim.keymap.set('n', "<leader>oc", "<cmd> e /home/nhsu/coding/<CR>", { desc = '[O]pen [C]oding folder' })
+vim.keymap.set('n', "<leader>oi", "<cmd> e /home/nhsu/.config/i3/config<CR>", { desc = '[O]pen [i]3 config' })
+
+
 -- vim.keymap.set('n', "<leader>td", function() vim.diagnostic.config({virtual_text=false}) end, {desc = '[T]oggle [D]iagnostics'})
 local virtual_text = true
 vim.keymap.set(
@@ -109,12 +116,15 @@ vim.keymap.set('x', "p", "\"_dP")
 -- to allow ctrl backspace to delete words in terminal emulator (for some reason ctrl-backspace maps to ctrl-h in konsole)
 vim.keymap.set('i', "<C-h>", "<C-W>")
 
+vim.keymap.set('n', "<leader>w", function() vim.cmd(":w") end, { desc = "write", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>q", function() vim.cmd(":q") end, { desc = "quit", noremap = false, silent = true })
 -- terminal command examples
 -- vim.keymap.set("n", "<leader>g", "<cmd>term git fetch<cr>", {desc = "git fetch"})
 -- vim.keymap.set("n", "<leader>g2", "<cmd>term read -p 'say something: \n' x<cr>", {desc = "take input?"})
 -- vim.keymap.set("n", "<leader>gt", function() print("testing testing") end, {desc = "print some stuff"})
-vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "[R]un [p]ython script", noremap = false, silent = true })
-vim.keymap.set('n', "<leader>rc", "<cmd>!gcc % && ./a.out <CR>", { desc = "[R]un [c] program", noremap = false, silent = true })
+-- vim.keymap.set('n', "<leader>rp", "<cmd>!python3 %<CR>", { desc = "[R]un [p]ython script", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>rp", function() vim.cmd(":w") vim.cmd("!python3 %") end, { desc = "[r]un [p]ython script", noremap = false, silent = true })
+vim.keymap.set('n', "<leader>rc", "<cmd>!gcc % && ./a.out <CR>", { desc = "[r]un [c] program", noremap = false, silent = true })
 
 ------------------------    [[ Basic Autocommands ]]    --------------------------------------------------
 -- NOTE: See `:help lua-guide-autocommands`

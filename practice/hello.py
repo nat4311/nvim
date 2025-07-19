@@ -37,4 +37,10 @@ class Dog:
     def __init__(self):
         pass
 
-
+print(1)
+print(1)
+print(1)
+print(1)
+print(1)
+print(1)
+print(1)
